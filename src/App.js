@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import uuid from "uuid/v4";
 
+const head = xs => xs[0];
+
 const list = () => ({
   id: uuid(),
   title: `Nova lista criada em ${Date()}`,
@@ -35,7 +37,7 @@ function List({ list, items, select }) {
   );
 }
 
-function Lists({ lists, items, createList, selectList, unselectList }) {
+function Lists({ lists, items, createList, selectList }) {
   const select = list => () => selectList(list);
 
   return (
@@ -48,26 +50,67 @@ function Lists({ lists, items, createList, selectList, unselectList }) {
         <button type="button" onClick={createList}>
           Nova lista
         </button>
-        <button type="button" onClick={unselectList}>
-          Des-selecionar
-        </button>
       </p>
     </>
   );
 }
 
+function ListView({ list, items, unselect }) {
+  return (
+    <>
+      <h1>Lista: {list.title}</h1>
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Qtd</th>
+            <th scope="col">Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          {items.map(i => (
+            <tr key={i.id}>
+              <td>
+                <button>-</button>
+              </td>
+              <td>{i.count}</td>
+              <td>{i.title}</td>
+              <td>
+                <button>+</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p onClick={unselect}>&larr; Voltar</p>
+    </>
+  );
+}
+
 function App() {
+  // hooks
   const [lists, setLists] = useState(initialData.lists);
   const [items, setItems] = useState(initialData.items);
   const [selectedListId, selectListId] = useState();
 
+  // utility definitions
+  const selectedList = head(lists.filter(l => l.id === selectedListId));
+
+  // utility functions
   const createList = () => setLists([...lists, list()]);
   const selectList = list => selectListId(list.id);
   const unselectList = () => selectListId();
 
   return (
     <>
-      <Lists lists={lists} items={items} createList={createList} selectList={selectList} unselectList={unselectList} />
+      {selectedList ? (
+        <ListView
+          list={selectedList}
+          items={items.filter(i => i.list_id === selectedList.id)}
+          unselect={unselectList}
+        />
+      ) : (
+        <Lists lists={lists} items={items} createList={createList} selectList={selectList} />
+      )}
 
       <DBG {...{ selectedListId, lists, items }} />
     </>
