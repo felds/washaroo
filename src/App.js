@@ -2,14 +2,15 @@ import React, { useState } from "react";
 import uuid from "uuid/v4";
 
 const head = xs => xs[0];
+const sum = ns => ns.reduce((acc, n) => acc + n, 0);
 
 const list = () => ({
   id: uuid(),
   title: `Nova lista criada em ${Date()}`,
 });
 
-const item = list_id => ({
-  list_id,
+const item = list => ({
+  list_id: list.id,
   id: uuid(),
   title: `Novo item`,
   count: 1,
@@ -20,7 +21,7 @@ const l2 = list();
 const l3 = list();
 const initialData = {
   lists: [l1, l2, l3],
-  items: [item(l2.id), item(l1.id), item(l1.id), item(l1.id)],
+  items: [item(l2), item(l1), item(l1), item(l1)],
 };
 
 function List({ list, items, select }) {
@@ -44,7 +45,12 @@ function Lists({ lists, items, createList, selectList }) {
     <>
       <h3>Listas:</h3>
       {lists.map(l => (
-        <List key={l.id} list={l} items={items.filter(i => i.list_id === l.id)} select={select(l)} />
+        <List
+          key={l.id}
+          list={l}
+          items={items.filter(i => i.list_id === l.id)}
+          select={select(l)}
+        />
       ))}
       <p>
         <button type="button" onClick={createList}>
@@ -55,7 +61,7 @@ function Lists({ lists, items, createList, selectList }) {
   );
 }
 
-function ListView({ list, items, unselect }) {
+function ListView({ list, items, unselect, incItem, decItem }) {
   return (
     <>
       <h1>Lista: {list.title}</h1>
@@ -70,18 +76,21 @@ function ListView({ list, items, unselect }) {
           {items.map(i => (
             <tr key={i.id}>
               <td>
-                <button>-</button>
+                <button onClick={() => decItem(i)}>-</button>
               </td>
               <td>{i.count}</td>
               <td>{i.title}</td>
               <td>
-                <button>+</button>
+                <button onClick={() => incItem(i)}>+</button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
       <p onClick={unselect}>&larr; Voltar</p>
+      <p>
+        <small>Total: {sum(items.map(i => i.count))}</small>
+      </p>
     </>
   );
 }
@@ -99,6 +108,16 @@ function App() {
   const createList = () => setLists([...lists, list()]);
   const selectList = list => selectListId(list.id);
   const unselectList = () => selectListId();
+  const incItem = item =>
+    setItems(
+      items.map(i => (i.id === item.id ? { ...i, count: i.count + 1 } : i)),
+    );
+  const decItem = item =>
+    setItems(
+      items.map(i => (i.id === item.id ? { ...i, count: i.count - 1 } : i)),
+    );
+  const removeItem = item => setItems(items.filter(i => i.id !== item.id));
+  const addItem = list => setItems([...items, item(list)]);
 
   return (
     <>
@@ -107,9 +126,17 @@ function App() {
           list={selectedList}
           items={items.filter(i => i.list_id === selectedList.id)}
           unselect={unselectList}
+          incItem={incItem}
+          decItem={decItem}
+          removeItem={removeItem}
         />
       ) : (
-        <Lists lists={lists} items={items} createList={createList} selectList={selectList} />
+        <Lists
+          lists={lists}
+          items={items}
+          createList={createList}
+          selectList={selectList}
+        />
       )}
 
       <DBG {...{ selectedListId, lists, items }} />
