@@ -1,18 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import uuid from "uuid/v4";
-
-const head = xs => xs[0];
-const sum = ns => ns.reduce((acc, n) => acc + n, 0);
+import { head } from "./utils/list";
+import { sum } from "./utils/math";
 
 const list = () => ({
   id: uuid(),
   title: `Nova lista criada em ${Date()}`,
 });
 
-const item = list => ({
+const item = (list, title = "Novo item") => ({
   list_id: list.id,
   id: uuid(),
-  title: `Novo item`,
+  title,
   count: 1,
 });
 
@@ -61,7 +60,15 @@ function Lists({ lists, items, createList, selectList }) {
   );
 }
 
-function ListView({ list, items, unselect, incItem, decItem }) {
+function ListView({ list, items, unselect, incItem, decItem, addItem }) {
+  const input = useRef();
+
+  const add = e => {
+    e.preventDefault();
+    addItem(list, input.current.value);
+    input.current.value = "";
+  };
+
   return (
     <>
       <h1>Lista: {list.title}</h1>
@@ -91,6 +98,12 @@ function ListView({ list, items, unselect, incItem, decItem }) {
       <p>
         <small>Total: {sum(items.map(i => i.count))}</small>
       </p>
+      <p>
+        <form onSubmit={add}>
+          <input type="text" ref={input} />
+          <button>criar</button>
+        </form>
+      </p>
     </>
   );
 }
@@ -117,7 +130,7 @@ function App() {
       items.map(i => (i.id === item.id ? { ...i, count: i.count - 1 } : i)),
     );
   const removeItem = item => setItems(items.filter(i => i.id !== item.id));
-  const addItem = list => setItems([...items, item(list)]);
+  const addItem = (list, title) => setItems([...items, item(list, title)]);
 
   return (
     <>
@@ -129,6 +142,7 @@ function App() {
           incItem={incItem}
           decItem={decItem}
           removeItem={removeItem}
+          addItem={addItem}
         />
       ) : (
         <Lists
