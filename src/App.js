@@ -31,7 +31,7 @@ function List({ list, items, select }) {
         <br />
         <small>id: {list.id}</small>
         <br />
-        {items.length} itens
+        {sum(items.map(i => i.count))} itens
       </p>
     </>
   );
