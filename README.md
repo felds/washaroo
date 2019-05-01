@@ -70,6 +70,6 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/tr
 
 # TO DO 
 
-* [_] When adding something with the same name, increment item count
-* [_] Validate against negative count
-* [_] Remove item when trying to decrement count and count is 0
+* [ ] When adding something with the same name, increment item count
+* [ ] Validate against negative count
+* [ ] Remove item when trying to decrement count and count is 0
