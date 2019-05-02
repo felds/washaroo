@@ -61,17 +61,19 @@ function Batches({ batches, items, createBatch, selectBatch }) {
 }
 
 function ListView({ batch, items, unselect, incItem, decItem, addItem }) {
-  const input = useRef();
+  const [newItem, setNewItem] = useState("");
 
-  const add = e => {
-    e.preventDefault();
-    addItem(batch, input.current.value);
-    input.current.value = "";
+  const addNewItem = () => {
+    console.log(`Adicionando ${newItem}`);
+    console.log(addItem);
+
+    addItem(newItem);
+    setNewItem("");
   };
 
   return (
     <>
-      <h1>Lista: {batch.title}</h1>
+      <h1>Lote: {batch.title}</h1>
       <table>
         <thead>
           <tr>
@@ -101,10 +103,12 @@ function ListView({ batch, items, unselect, incItem, decItem, addItem }) {
         <small>Total: {sum(items.map(i => i.count))}</small>
       </p>
       <p>
-        <form onSubmit={add}>
-          <input type="text" ref={input} />
-          <button>criar</button>
-        </form>
+        <input
+          type="text"
+          value={newItem}
+          onChange={e => setNewItem(e.target.value)}
+          onKeyDown={e => e.key === "Enter" && addNewItem()}
+        />
       </p>
     </>
   );
@@ -132,7 +136,11 @@ function App() {
       items.map(i => (i.id === item.id ? { ...i, count: i.count - 1 } : i)),
     );
   const removeItem = item => setItems(items.filter(i => i.id !== item.id));
-  const addItem = (batch, title) => setItems([...items, item(batch, title)]);
+  // const addItem = (batch, title) => setItems([...items, item(batch, title)]);
+  const addItem = batch => title => {
+    console.log("Adicionando", batch, title);
+    setItems([...items, item(batch, title)]);
+  };
 
   return (
     <>
@@ -144,7 +152,7 @@ function App() {
           incItem={incItem}
           decItem={decItem}
           removeItem={removeItem}
-          addItem={addItem}
+          addItem={addItem(selectedBatch)}
         />
       ) : (
         <Batches
