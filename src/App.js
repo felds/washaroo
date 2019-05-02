@@ -75,8 +75,10 @@ function ListView({ list, items, unselect, incItem, decItem, addItem }) {
       <table>
         <thead>
           <tr>
+            <th scope="col" />
             <th scope="col">Qtd</th>
             <th scope="col">Name</th>
+            <th scope="col" />
           </tr>
         </thead>
         <tbody>
