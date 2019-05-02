@@ -3,33 +3,33 @@ import uuid from "uuid/v4";
 import { head } from "./utils/list";
 import { sum } from "./utils/math";
 
-const list = () => ({
+const batch = () => ({
   id: uuid(),
   title: `Nova lista criada em ${Date()}`,
 });
 
-const item = (list, title = "Novo item") => ({
-  list_id: list.id,
+const item = (batch, title = "Novo item") => ({
+  batch_id: batch.id,
   id: uuid(),
   title,
   count: 1,
 });
 
-const l1 = list();
-const l2 = list();
-const l3 = list();
+const b1 = batch();
+const b2 = batch();
+const b3 = batch();
 const initialData = {
-  lists: [l1, l2, l3],
-  items: [item(l2), item(l1), item(l1), item(l1)],
+  batches: [b1, b2, b3],
+  items: [item(b2), item(b1), item(b1), item(b1)],
 };
 
-function List({ list, items, select }) {
+function Batch({ batch, items, select }) {
   return (
     <>
-      <p className="list" onClick={select}>
-        {list.title}
+      <p className="batch" onClick={select}>
+        {batch.title}
         <br />
-        <small>id: {list.id}</small>
+        <small>id: {batch.id}</small>
         <br />
         {sum(items.map(i => i.count))} itens
       </p>
@@ -37,41 +37,41 @@ function List({ list, items, select }) {
   );
 }
 
-function Lists({ lists, items, createList, selectList }) {
-  const select = list => () => selectList(list);
+function Batches({ batches, items, createBatch, selectBatch }) {
+  const select = batch => () => selectBatch(batch);
 
   return (
     <>
-      <h3>Listas:</h3>
-      {lists.map(l => (
-        <List
-          key={l.id}
-          list={l}
-          items={items.filter(i => i.list_id === l.id)}
-          select={select(l)}
+      <h3>Lotes:</h3>
+      {batches.map(b => (
+        <Batch
+          key={b.id}
+          batch={b}
+          items={items.filter(i => i.batch_id === b.id)}
+          select={select(b)}
         />
       ))}
       <p>
-        <button type="button" onClick={createList}>
-          Nova lista
+        <button type="button" onClick={createBatch}>
+          Novo lote
         </button>
       </p>
     </>
   );
 }
 
-function ListView({ list, items, unselect, incItem, decItem, addItem }) {
+function ListView({ batch, items, unselect, incItem, decItem, addItem }) {
   const input = useRef();
 
   const add = e => {
     e.preventDefault();
-    addItem(list, input.current.value);
+    addItem(batch, input.current.value);
     input.current.value = "";
   };
 
   return (
     <>
-      <h1>Lista: {list.title}</h1>
+      <h1>Lista: {batch.title}</h1>
       <table>
         <thead>
           <tr>
@@ -112,17 +112,17 @@ function ListView({ list, items, unselect, incItem, decItem, addItem }) {
 
 function App() {
   // hooks
-  const [lists, setLists] = useState(initialData.lists);
+  const [batches, setBatches] = useState(initialData.batches);
   const [items, setItems] = useState(initialData.items);
-  const [selectedListId, selectListId] = useState();
+  const [selectedBatchId, selectBatchId] = useState();
 
   // utility definitions
-  const selectedList = head(lists.filter(l => l.id === selectedListId));
+  const selectedBatch = head(batches.filter(b => b.id === selectedBatchId));
 
   // utility functions
-  const createList = () => setLists([...lists, list()]);
-  const selectList = list => selectListId(list.id);
-  const unselectList = () => selectListId();
+  const createBatch = () => setBatches([...batches, batch()]);
+  const selectBatch = batch => selectBatchId(batch.id);
+  const unselectBatch = () => selectBatchId();
   const incItem = item =>
     setItems(
       items.map(i => (i.id === item.id ? { ...i, count: i.count + 1 } : i)),
@@ -132,30 +132,30 @@ function App() {
       items.map(i => (i.id === item.id ? { ...i, count: i.count - 1 } : i)),
     );
   const removeItem = item => setItems(items.filter(i => i.id !== item.id));
-  const addItem = (list, title) => setItems([...items, item(list, title)]);
+  const addItem = (batch, title) => setItems([...items, item(batch, title)]);
 
   return (
     <>
-      {selectedList ? (
+      {selectedBatch ? (
         <ListView
-          list={selectedList}
-          items={items.filter(i => i.list_id === selectedList.id)}
-          unselect={unselectList}
+          batch={selectedBatch}
+          items={items.filter(i => i.batch_id === selectedBatch.id)}
+          unselect={unselectBatch}
           incItem={incItem}
           decItem={decItem}
           removeItem={removeItem}
           addItem={addItem}
         />
       ) : (
-        <Lists
-          lists={lists}
+        <Batches
+          batches={batches}
           items={items}
-          createList={createList}
-          selectList={selectList}
+          createBatch={createBatch}
+          selectBatch={selectBatch}
         />
       )}
 
-      <DBG {...{ selectedListId, lists, items }} />
+      <DBG {...{ selectedBatchId, batches, items }} />
     </>
   );
 }
