@@ -7,7 +7,7 @@ type BatchParams = {
   items: Array<item>;
   select: MouseEventHandler;
 };
-function Batch({ batch, items, select }: BatchParams) {
+function BatchListItem({ batch, items, select }: BatchParams) {
   return (
     <>
       <p className="batch" onClick={select}>
@@ -39,7 +39,7 @@ export default function BatchList({
     <div className="batch-list">
       <h1 className="batch-list__title">Lotes</h1>
       {batches.map(b => (
-        <Batch
+        <BatchListItem
           key={b.id}
           batch={b}
           items={items.filter(i => i.batch_id === b.id)}
