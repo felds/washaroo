@@ -30,10 +30,15 @@ function App() {
     setItems(
       items.map(i => (i.id === item.id ? { ...i, count: i.count + 1 } : i)),
     );
-  const decItem = (item: item) =>
-    setItems(
-      items.map(i => (i.id === item.id ? { ...i, count: i.count - 1 } : i)),
-    );
+  const decItem = (item: item) => {
+    if (item.count < 1) {
+      removeItem(item);
+    } else {
+      setItems(
+        items.map(i => (i.id === item.id ? { ...i, count: i.count - 1 } : i)),
+      );
+    }
+  };
   const removeItem = (item: item) =>
     setItems(items.filter(i => i.id !== item.id));
   const addItem = (batch: batch) => (title: string) =>
