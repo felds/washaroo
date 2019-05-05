@@ -42,7 +42,14 @@ function App() {
   return (
     <div className="app">
       {selectedBatch ? (
-        <BatchView batch={selectedBatch} />
+        <BatchView
+          batch={selectedBatch}
+          addNewItem={addItem(selectedBatch)}
+          incItem={incItem}
+          decItem={decItem}
+          items={items.filter(i => i.batch_id === selectedBatch.id)}
+          unselect={unselectBatch}
+        />
       ) : (
         <BatchList
           batches={batches}
