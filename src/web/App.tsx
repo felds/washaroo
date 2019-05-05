@@ -3,6 +3,7 @@ import { batch, item } from "../model";
 import { head } from "../utils/list";
 import BatchList from "./BatchList";
 import _DBG from "./_DGB";
+import BatchView from "./BatchView";
 
 const b1 = batch();
 const b2 = batch();
@@ -41,9 +42,7 @@ function App() {
   return (
     <div className="app">
       {selectedBatch ? (
-        <p onClick={unselectBatch}>
-          Lote selecionado: {JSON.stringify(selectedBatch)}
-        </p>
+        <BatchView batch={selectedBatch} />
       ) : (
         <BatchList
           batches={batches}

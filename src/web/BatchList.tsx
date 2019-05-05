@@ -4,7 +4,7 @@ import { batch, item } from "../model";
 
 type BatchParams = {
   batch: batch;
-  items: Array<item>;
+  items: item[];
   select: MouseEventHandler;
 };
 function BatchListItem({ batch, items, select }: BatchParams) {
@@ -22,8 +22,8 @@ function BatchListItem({ batch, items, select }: BatchParams) {
 }
 
 type BatchListParams = {
-  batches: Array<batch>;
-  items: Array<item>;
+  batches: batch[];
+  items: item[];
   createBatch: MouseEventHandler;
   selectBatch: Function;
 };
